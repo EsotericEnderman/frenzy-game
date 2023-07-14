@@ -1117,6 +1117,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 415652229518196001, guid: 30d43a784b36bd144bca054efccfea0d, type: 3}
+      propertyPath: gravity
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 415652229518196001, guid: 30d43a784b36bd144bca054efccfea0d, type: 3}
+      propertyPath: jumpStrength
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 415652229518196012, guid: 30d43a784b36bd144bca054efccfea0d, type: 3}
       propertyPath: m_Name
       value: FPS Controller
