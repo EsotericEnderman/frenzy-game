@@ -1,80 +1,78 @@
 using UnityEngine;
 
-using Math = System.Math;
-
 public class Movement : MonoBehaviour
 {
 	public CharacterController characterController;
-	public KeyCode sprintKey;
+	public KeyCode sprintKey = KeyCode.LeftControl;
+	public KeyCode jumpKey = KeyCode.Space;
 
-	private float speed;
+	public float walkSpeedPerSecond = 6.6F;
+	public float sprintSpeedPerSecond = 10F;
 
-	public float walkSpeed;
-	public float sprintSpeed;
+	public float staminaDecreasePerSecond = 10F;
+	public float staminaRecoveryPerSecond = 5F;
 
-	public float staminaInterval;
+	public float gravityPerSecondSquared = -9.81F;
+	public float jumpHeight = 4000F;
 
-	public float gravity = -9.81F;
-	public float jumpStrength;
-
-	public Transform groundCheck;
+	public Transform groundCheckTransform;
 	public float groundCheckDistance = 0.12F;
 	public LayerMask groundMask;
 
-	private bool isGrounded;
+	public float maxStamina = 100F;
+	public float minStamina = 0F;
+	public float stamina;
 
-	private Vector3 fallingVelocity;
+	private Vector3 velocity = new();
+	public bool isOnGround;
 
-	// Update is called once per frame
+	void Start()
+	{
+		stamina = maxStamina;
+	}
+
 	void Update()
 	{
-		float stamina = GameManager.instance.stamina;
+		float speedPerSecond;
+
+		if (stamina > 0 && Input.GetKey(sprintKey))
+		{
+			speedPerSecond = sprintSpeedPerSecond;
+
+			stamina -= Time.deltaTime * staminaDecreasePerSecond;
+		}
+		else
+		{
+			speedPerSecond = walkSpeedPerSecond;
+
+			stamina += Time.deltaTime * staminaRecoveryPerSecond;
+		}
+
+		stamina = Mathf.Clamp(stamina, minStamina, maxStamina);
+
+		GameManager.instance.staminaBar.fillAmount = stamina / maxStamina;
 
 		float x = Input.GetAxis("Horizontal");
 		float z = Input.GetAxis("Vertical");
 
 		Vector3 direction = transform.right * x + transform.forward * z;
 
-		if (stamina > 0 && Input.GetKey(sprintKey))
-		{
-			if (stamina > 0.01f) speed = sprintSpeed;
+		characterController.Move(direction * speedPerSecond * Time.deltaTime);
 
-			stamina -= Time.deltaTime * staminaInterval;
-		}
-		else
-		{
-			speed = walkSpeed;
+		isOnGround = Physics.CheckSphere(groundCheckTransform.position, groundCheckDistance, groundMask);
 
-			stamina += Time.deltaTime * staminaInterval;
+		if (Input.GetKey(jumpKey) && isOnGround)
+		{
+			velocity.y += Mathf.Sqrt(jumpHeight * -3.0F * gravityPerSecondSquared);
 		}
 
-		GameManager.instance.stamina = Mathf.Clamp01(stamina);
+		velocity.y += gravityPerSecondSquared * Time.deltaTime;
 
-		GameManager.instance.staminaBar.fillAmount = GameManager.instance.stamina / GameManager.instance.maxStamina;
-
-		characterController.Move(direction * speed * Time.deltaTime);
-
-		if (Input.GetButton("Jump") && isGrounded)
+		if (isOnGround)
 		{
-			fallingVelocity.y = Mathf.Sqrt(jumpStrength * -2f * gravity);
-
-			characterController.Move(fallingVelocity);
+			velocity.y = 0;
 		}
 
-		isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckDistance, groundMask);
-
-		fallingVelocity.y += gravity * Time.deltaTime;
-
-		if (isGrounded)
-		{
-			fallingVelocity.y = 0;
-		}
-
-		// Terminal velocity = 55.5555m/s.
-		// Minimum is 0 and maximum is 55.5555m/s.
-		// Gravity is negative so min = -55.5555m/s and max = 0.
-		fallingVelocity.y = Math.Clamp(fallingVelocity.y, -55f / 99f * 100, 0);
-
-		characterController.Move(fallingVelocity * Time.deltaTime);
+		characterController.Move(velocity * Time.deltaTime);
 	}
 }

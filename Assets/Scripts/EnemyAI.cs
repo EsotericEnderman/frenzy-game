@@ -5,16 +5,15 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     public Transform[] patrolPoints;
-    public float chaseDistance = 5f;
-    public float patrolSpeed = 3f;
-    public float chaseSpeed = 5f;
+    public float chaseDistance = 5F;
+    public float patrolSpeed = 3F;
+    public float chaseSpeed = 5F;
 
     private NavMeshAgent agent;
     private Transform target;
     private int currentPatrolPointIndex;
     private bool isChasing;
 
-    // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -23,7 +22,6 @@ public class EnemyAI : MonoBehaviour
         isChasing = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (isChasing)
@@ -39,12 +37,6 @@ public class EnemyAI : MonoBehaviour
     private void Patrol ()
     {
         agent.SetDestination(patrolPoints[currentPatrolPointIndex].position);
-
-
-        //if (patrolPoints.Length != 0)
-        //{
-            
-        //}
 
         if (agent.remainingDistance <= agent.stoppingDistance )
         {
