@@ -63,7 +63,7 @@ public class Movement : MonoBehaviour
 
 		velocity.y += gravityPerSecondSquared * Time.deltaTime;
 
-		if (isOnGround)
+		if (isOnGround && !Input.GetKey(jumpKey))
 		{
 			velocity.y = 0;
 		}
