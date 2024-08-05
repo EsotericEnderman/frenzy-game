@@ -17,7 +17,7 @@ public class Movement : MonoBehaviour
 	private readonly float minStamina = 0F;
 	private readonly float staminaDecreasePerSecond = 10F;
 	private readonly float staminaRecoveryPerSecond = 5F;
-	private readonly float jumpHeight = 4000F;
+	private readonly float jumpHeight = 4F;
 	private readonly float groundCheckDistance = 0.12F;
 
 	private Vector3 velocity = new();
