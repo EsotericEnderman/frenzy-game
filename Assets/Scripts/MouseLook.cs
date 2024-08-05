@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class MouseLook : MonoBehaviour
 {
-	public float sensitivity = 1000;
+
 	public Transform playerBody;
+
+	private readonly float sensitivity = 1000;
 
 	private float xRotation = 0;
 

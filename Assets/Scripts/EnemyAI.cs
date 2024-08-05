@@ -4,22 +4,23 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
-    public Transform[] patrolPoints;
-    public float chaseDistance = 5F;
-    public float patrolSpeed = 3F;
-    public float chaseSpeed = 5F;
 
     private NavMeshAgent agent;
-    private Transform target;
-    private int currentPatrolPointIndex;
-    private bool isChasing;
+    private Transform targetLocation;
+
+    public Transform[] patrolPoints;
+
+    private readonly float chaseDistancePerSecond = 5F;
+    private readonly float patrolSpeedPerSecond = 3F;
+    private readonly float chaseSpeedPerSecond = 5F;
+
+    private int currentPatrolPointIndex = 0;
+    private bool isChasing = false;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        target = GameObject.FindGameObjectWithTag("Player").transform;
-        currentPatrolPointIndex = 0;
-        isChasing = false;
+        targetLocation = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void Update()
@@ -34,30 +35,30 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private void Patrol ()
+    private void Patrol()
     {
         agent.SetDestination(patrolPoints[currentPatrolPointIndex].position);
 
-        if (agent.remainingDistance <= agent.stoppingDistance )
+        if (agent.remainingDistance <= agent.stoppingDistance)
         {
             currentPatrolPointIndex = (currentPatrolPointIndex + 1) % patrolPoints.Length;
         }
 
-        if (Vector3.Distance(transform.position, target.position) <= chaseDistance)
+        if (Vector3.Distance(transform.position, targetLocation.position) <= chaseDistancePerSecond)
         {
             isChasing = true;
-            agent.speed = chaseSpeed;
+            agent.speed = chaseSpeedPerSecond;
         }
     }
 
     private void ChaseTarget()
     {
-        agent.SetDestination(target.position);
+        agent.SetDestination(targetLocation.position);
 
-        if (Vector3.Distance(transform.position, target.position) > chaseDistance)
+        if (Vector3.Distance(transform.position, targetLocation.position) > chaseDistancePerSecond)
         {
             isChasing = false;
-            agent.speed = patrolSpeed;
+            agent.speed = patrolSpeedPerSecond;
         }
     }
 }
