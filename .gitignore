@@ -3,3 +3,4 @@ obj
 Temp
 UserSettings
 Logs
+*.csproj
